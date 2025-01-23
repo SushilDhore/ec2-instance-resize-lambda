@@ -10,11 +10,12 @@ def wait_until_instance_stopped(ec2_client, instance_id):
         print(f"Error waiting for instance to stop: {e}")
 
 def lambda_handler(event, context):
-    # Retrieve the instance ID from the event parameter
+    # Retrieve the instance ID and region from the event parameter
     instance_id = event['instanceId']
+    region = event.get('region', 'ap-south-1')  # Default to ap-south-1 if region not provided
     
-    # Create an EC2 client
-    ec2_client = boto3.client('ec2')
+    # Create an EC2 client for the specified region
+    ec2_client = boto3.client('ec2', region_name=region)
     
     try:
         # Stop the instance
@@ -34,4 +35,6 @@ def lambda_handler(event, context):
     except Exception as e:
         # Handle any exceptions that occur during the resizing process
         return f'Error resizing instance: {e}'
-  
+
+
+
